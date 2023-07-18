@@ -169,7 +169,7 @@ Here are the supported Function parameters:
 | ------------- |:-------------:|:-----------------------------------------------------------------------------------|
 | API_ENDPOINT      | not-configured | REST API endpoint for reaching MoogSoft                                            |
 | API_TOKEN      | not-configured      | API license token obtained from MoogSoft                                           |
-| METRICS_TAG_KEYS | name, namespace, displayName, resourceDisplayName, unit      | OCI Metric Dimensions and metadata to convert to MoogSoft Metric Tags              |
+| TAG_KEYS | name, namespace, displayName, resourceDisplayName, unit      | OCI Metric Dimensions and metadata to convert to MoogSoft Metric Tags              |
 | LOGGING_LEVEL | INFO     | Controls function logging outputs.  Choices: INFO, WARN, CRITICAL, ERROR, DEBUG    |
 | FORWARDING_ENABLED | True      | Determines whether messages are forwarded to MoogSoft                              |
 
