@@ -211,7 +211,7 @@ def send_to_moogsoft_endpoint(event_list):
             api_headers = {'Content-Type': 'application/json', 'apiKey': api_key}
             logging.debug("json to MoogSoft: {}".format(json.dumps(event)))
             logging.debug("headers to MoogSoft: {}".format(api_headers))
-            response = session.post(api_endpoint, data=json.dumps(event), headers=api_headers)
+            response = session.post(api_endpoint, data=event, headers=api_headers)
 
             if response.status_code not in (200, 201, 202):
                 raise Exception('error {} sending to MoogSoft: {}'.format(response.status_code, response.reason))
