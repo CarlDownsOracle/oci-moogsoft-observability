@@ -208,7 +208,7 @@ def send_to_moogsoft_endpoint(event_list):
         session.mount('https://', adapter)
 
         for event in event_list:
-            api_headers = {'Content-type': 'application/json', 'API-KEY': api_key}
+            api_headers = {'Content-type': 'application/json', 'apiKey': api_key}
             logging.debug("json to MoogSoft: {}".format(json.dumps(event)))
             response = session.post(api_endpoint, data=json.dumps(event), headers=api_headers)
 
