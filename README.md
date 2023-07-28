@@ -129,14 +129,48 @@ Resulting Output:
       ]
     }
 
+
 ---
-## Policy Setup
+# OCI
 
-You will need 
-this [IAM policy](https://docs.oracle.com/en-us/iaas/Content/Functions/Tasks/functionscreatingpolicies.htm#Create_Policies_to_Control_Access_to_Network_and_FunctionRelated_Resources) 
-to authorize the Service Connector to invoke your Function.
+Here are the steps to set up OCI.
 
-    allow any-user to use fn-function in compartment id ocid1.compartment.oc1... where all {request.principal.type=’serviceconnector’, request.principal.compartment.id=’ocid1.compartment.oc1...’}
+## Compartment
+
+Create a compartment to contain the following:
+
+- Virtual Cloud Network
+- Application + Function
+- Service Connector
+
+_Let's assume you create a compartment with name `ABC`._
+
+## Group
+
+Create a user group where we can assign developer related policies.   
+
+_Let's assume you create a user group with name `functions-developers`._
+
+## Policies
+
+See [common policies](https://docs.oracle.com/en-us/iaas/Content/Identity/Concepts/commonpolicies.htm).
+
+Let's assume we will permit users in 'functions-developers' to create, deploy and manage Functions and Applications.
+
+    Allow group functions-developers to manage repos in tenancy
+    Allow group functions-developers to manage serviceconnectors in tenancy
+    Allow group functions-developers to manage metrics in tenancy
+    Allow group functions-developers to use cloud-shell in tenancy
+    Allow group functions-developers to use virtual-network-family in tenancy
+
+We need to allow Functions Service to use OCIR Repositories:
+
+    Allow service faas to use repos in tenancy 
+
+We need to allow Service Connector to use Functions and Metrics:
+
+    Allow service service-connector-hub to use functions-family in compartment ABC
+    Allow service service-connector-hub to use metrics in compartment ABC
 
 ---
 ## Service Connector Setup
@@ -145,6 +179,8 @@ Now let’s set up a simple service connector instance that takes Monitoring sou
 
 Because your Function requires a VCN, you can use that VCN as the metric source to test against.  Let's test
 with the `oci_vcn` Monitoring namespace because it will quickly generate a lot of useful events.
+
+_Note - You will need to have a compute node attached the VCN to generate VCN flow logs._
 
 Select Monitoring as the source and the Function as the target. Configure your source as the 
 compartment where the VCN resides and select the Monitoring namespace (`oci_vcn`) that you want to
@@ -165,13 +201,13 @@ after a few minutes.
 
 Here are the supported Function parameters:
 
-| Environment Variable        | Default           | Purpose                                                                            |
-| ------------- |:-------------:|:-----------------------------------------------------------------------------------|
-| API_ENDPOINT      | not-configured | REST API endpoint for reaching MoogSoft                                            |
-| API_TOKEN      | not-configured      | API license token obtained from MoogSoft                                           |
-| TAG_KEYS | name, namespace, displayName, resourceDisplayName, unit      | OCI Metric Dimensions and metadata to convert to MoogSoft Metric Tags              |
-| LOGGING_LEVEL | INFO     | Controls function logging outputs.  Choices: INFO, WARN, CRITICAL, ERROR, DEBUG    |
-| FORWARDING_ENABLED | True      | Determines whether messages are forwarded to MoogSoft                              |
+| Environment Variable | Default           | Purpose                                                                            |
+|----------------------|:-------------:|:-----------------------------------------------------------------------------------|
+| API_ENDPOINT         | not-configured | REST API endpoint for reaching MoogSoft                                            |
+| API_KEY              | not-configured      | API license token obtained from MoogSoft                                           |
+| TAG_KEYS             | name, namespace, displayName, resourceDisplayName, unit      | OCI Metric Dimensions and metadata to convert to MoogSoft Metric Tags              |
+| LOGGING_LEVEL        | INFO     | Controls function logging outputs.  Choices: INFO, WARN, CRITICAL, ERROR, DEBUG    |
+| FORWARDING_ENABLED   | True      | Determines whether messages are forwarded to MoogSoft                              |
 
 ---
 ## Conclusion
