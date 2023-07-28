@@ -23,6 +23,7 @@ from datetime import datetime
 api_endpoint = os.getenv('API_ENDPOINT', 'not-configured')
 api_key = os.getenv('API_KEY', 'not-configured')
 is_forwarding = eval(os.getenv('FORWARDING_ENABLED', "False"))
+batch_size = os.getenv('BATCH_SIZE', 500)
 
 tag_keys = os.getenv('TAG_KEYS', 'name, namespace, displayName, resourceDisplayName, unit')
 tag_set = set()
@@ -203,18 +204,30 @@ def send_to_moogsoft_endpoint(event_list):
     # a new connection pool between each POST call
 
     try:
+
         session = requests.Session()
         adapter = requests.adapters.HTTPAdapter(pool_connections=10, pool_maxsize=10)
         session.mount('https://', adapter)
 
-        for event in event_list:
-            api_headers = {'Content-Type': 'application/json', 'apiKey': api_key}
-            logging.debug("json to MoogSoft: {}".format(json.dumps(event)))
-            logging.debug("headers to MoogSoft: {}".format(api_headers))
-            response = session.post(api_endpoint, data=json.dumps(event), headers=api_headers)
+        http_headers = {'Content-Type': 'application/json', 'apiKey': api_key}
+        logging.debug("headers to MoogSoft: {}".format(http_headers))
 
+        # send payload in batches
+
+        batches = []
+        sub_list = []
+        batches.append(sub_list)
+
+        for event in event_list:
+            sub_list.append(event)
+            if len(sub_list) >= batch_size:
+                sub_list = []
+                batches.append(sub_list)
+
+        for batch_list in batches:
+            response = session.post(api_endpoint, data=json.dumps(batch_list), headers=http_headers)
             if response.status_code not in (200, 201, 202):
-                raise Exception('error {} sending to MoogSoft: {}'.format(response.status_code, response.reason))
+                raise Exception(f'error {response.status_code} sending to MoogSoft: {response.reason}')
 
     finally:
         session.close()
