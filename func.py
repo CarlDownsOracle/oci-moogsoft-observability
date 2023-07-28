@@ -75,7 +75,7 @@ def transform_metric_events(event_list):
     result_list = []
     for event in event_list:
         single_result = transform_metric_to_moogsoft_format(log_record=event)
-        result_list.append(single_result)
+        result_list.extend(single_result)
         logging.debug(single_result)
 
     return result_list
