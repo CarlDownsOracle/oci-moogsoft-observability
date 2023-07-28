@@ -173,6 +173,29 @@ We need to allow Service Connector to use Functions and Metrics:
     Allow service service-connector-hub to use metrics in compartment ABC
 
 ---
+## Function Application
+
+Now wer are ready to build and deploy the function.  The following guide takes you step by step.  I recommend
+using the Cloud Shell method:
+
+[Quick Start guide on OCI Functions](https://docs.oracle.com/en-us/iaas/Content/Functions/Tasks/functionsquickstartguidestop.htm).
+
+
+### Function Environment Variables
+
+Here are the supported Function parameters.  You can set these up in the `configuration` section of the Function App.
+Note that only `API_ENDPOINT` and `API_KEY` are required (the others have reasonable defaults).
+
+| Environment Variable |                         Default                         | Purpose                                                                          |
+|----------------------|:-------------------------------------------------------:|:---------------------------------------------------------------------------------|
+| API_ENDPOINT         |                     not-configured                      | REST API endpoint for reaching MoogSoft.                                         |
+| API_KEY              |                     not-configured                      | API license token obtained from MoogSoft.                                        |
+| TAG_KEYS             | name, namespace, displayName, resourceDisplayName, unit | OCI Metric Dimensions and metadata to convert to MoogSoft Metric Tags.           |
+| BATCH_SIZE           |                           500                           | The Function will send metrics in batches of up to 500 records at a time.        |
+| LOGGING_LEVEL        |                          INFO                           | Controls function logging outputs.  Choices: INFO, WARN, CRITICAL, ERROR, DEBUG. |
+| FORWARDING_ENABLED   |                          True                           | Determines whether messages are forwarded to MoogSoft.                           |
+
+---
 ## Service Connector Setup
 
 Now let’s set up a simple service connector instance that takes Monitoring sources and passes them to our Function.
@@ -196,18 +219,6 @@ pick up. Select your Application and the Function within it as the target.
 When you have the Service Connector configured, metrics appear in MoogSoft's Metrics Explorer and notebooks 
 after a few minutes.
 
-
-## Function Environment
-
-Here are the supported Function parameters:
-
-| Environment Variable | Default           | Purpose                                                                            |
-|----------------------|:-------------:|:-----------------------------------------------------------------------------------|
-| API_ENDPOINT         | not-configured | REST API endpoint for reaching MoogSoft                                            |
-| API_KEY              | not-configured      | API license token obtained from MoogSoft                                           |
-| TAG_KEYS             | name, namespace, displayName, resourceDisplayName, unit      | OCI Metric Dimensions and metadata to convert to MoogSoft Metric Tags              |
-| LOGGING_LEVEL        | INFO     | Controls function logging outputs.  Choices: INFO, WARN, CRITICAL, ERROR, DEBUG    |
-| FORWARDING_ENABLED   | True      | Determines whether messages are forwarded to MoogSoft                              |
 
 ---
 ## Conclusion
