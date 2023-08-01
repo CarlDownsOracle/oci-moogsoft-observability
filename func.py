@@ -23,7 +23,7 @@ from datetime import datetime
 api_endpoint = os.getenv('API_ENDPOINT', 'not-configured')
 api_key = os.getenv('API_KEY', 'not-configured')
 is_forwarding = eval(os.getenv('FORWARDING_ENABLED', "False"))
-batch_size = os.getenv('BATCH_SIZE', 500)
+batch_size = int(os.getenv('BATCH_SIZE', '500'))
 
 tag_keys = os.getenv('TAG_KEYS', 'name, namespace, displayName, resourceDisplayName, unit')
 tag_set = set()
